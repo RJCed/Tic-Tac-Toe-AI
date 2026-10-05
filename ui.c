@@ -9,6 +9,7 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include "ui.h"
+#include "banner.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -195,6 +196,29 @@ static void print_box(const char *color, const char *line1, const char *line2)
     print_box_border(color, "╚", "╝");
 }
 
+/* Draws the big pixel-font title, centered. Falls back to the plain box. */
+static void print_title(void)
+{
+    static const BannerWord words[] = {
+        {"TIC", 45, 24},     /* main color, shadow color (256-color palette) */
+        {"TAC", 231, 244},
+        {"TOE", 203, 88},
+    };
+    const int count = (int)(sizeof words / sizeof words[0]);
+    char lines[BANNER_ROWS][BANNER_LINE_SIZE];
+
+    if (!banner_render(words, count, lines)) {
+        print_box(ANSI_BOLD, "TIC TAC TOE", "VS AI");
+        return;
+    }
+
+    int margin = margin_for(banner_width(words, count));
+    for (int i = 0; i < BANNER_ROWS; i++) {
+        print_spaces(margin);
+        puts(lines[i]);
+    }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Board drawing                                                      */
 /* ------------------------------------------------------------------ */
@@ -216,7 +240,7 @@ static void print_cell(char value, int highlighted)
  * Every line uses the same left margin so the grid stays aligned.
  */
 static void draw_board(char board[BOARD_SIZE][BOARD_SIZE],
-                       int highlight[BOARD_SIZE][BOARD_SIZE])
+                        int highlight[BOARD_SIZE][BOARD_SIZE])
 {
     int margin = margin_for(BOARD_WIDTH);
 
@@ -246,7 +270,7 @@ static void draw_board(char board[BOARD_SIZE][BOARD_SIZE],
 
 /* Marks the three squares of `player`'s winning line (if any) in the mask. */
 static void mark_winning_cells(char board[BOARD_SIZE][BOARD_SIZE], char player,
-                               int highlight[BOARD_SIZE][BOARD_SIZE])
+                                int highlight[BOARD_SIZE][BOARD_SIZE])
 {
     int cells[BOARD_SIZE][2];
 
@@ -269,10 +293,10 @@ static void draw_legend(void)
 
 /* Clears the screen, then draws the title banner and the board. */
 static void draw_game_screen(char board[BOARD_SIZE][BOARD_SIZE],
-                             int highlight[BOARD_SIZE][BOARD_SIZE])
+                            int highlight[BOARD_SIZE][BOARD_SIZE])
 {
     begin_screen();
-    print_box(ANSI_BOLD, "TIC TAC TOE", "VS AI");
+    print_title();
     putchar('\n');
     draw_board(board, highlight);
     putchar('\n');
