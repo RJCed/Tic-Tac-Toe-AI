@@ -17,5 +17,7 @@
  * other file.
  */
 int ai_choose_move(char board[BOARD_SIZE][BOARD_SIZE], int *row, int *col);
+int minimax(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn);
+int best_score(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn);
 
 #endif /* AI_H */

@@ -1,14 +1,12 @@
 #include "ai.h"
 
-int minimax(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn);
-int best_score(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn);
-
 int ai_choose_move(char board[BOARD_SIZE][BOARD_SIZE], int *row, int *col)
 {
     int bestScore = -1000;
     int bestMoveR = -1;
     int bestMoveC = -1;
 
+    // Check for each cell
     for (int r = 0; r < BOARD_SIZE; r++) {
         for (int c = 0; c < BOARD_SIZE; c++) {
 
@@ -39,6 +37,7 @@ int ai_choose_move(char board[BOARD_SIZE][BOARD_SIZE], int *row, int *col)
     return 1;
 }
 
+// Perform the minimax algorithm
 int minimax(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn)
 {
     if (check_winner(board, AI_SYMBOL)) {
@@ -56,6 +55,8 @@ int minimax(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn)
     return best_score(board, ai_turn);
 }
 
+
+// Check for the best score 
 int best_score(char board[BOARD_SIZE][BOARD_SIZE], int ai_turn)
 {
     int bestScore = ai_turn ? -1000 : 1000;
