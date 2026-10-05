@@ -4,6 +4,15 @@
 #include "game.h"
 
 /*
+ * Shows the title screen and asks who plays first: 1 = the player, 2 = the AI.
+ * Keeps asking until the answer is valid.
+ *
+ * Returns 1 and sets *player_first (1 = player, 0 = AI) on success.
+ * Returns 0 if the player typed Q to quit or stdin reached end-of-file.
+ */
+int ui_prompt_first_player(int *player_first);
+
+/*
  * Draws the game screen and asks the player for a move.
  * Keeps asking until the move is valid (and tells the player what was wrong).
  *

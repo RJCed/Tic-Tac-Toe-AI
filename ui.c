@@ -374,9 +374,60 @@ static int is_quit_command(const char *text)
     return is_blank(text + 1);
 }
 
+/*
+ * Reads the answer to "Who goes first?".
+ * Returns 1 for "1", 2 for "2", or 0 for anything else (spaces are fine).
+ */
+static int parse_first_player_choice(const char *text)
+{
+    while (*text != '\0' && isspace((unsigned char)*text)) {
+        text++;
+    }
+    if ((*text == '1' || *text == '2') && is_blank(text + 1)) {
+        return *text - '0';
+    }
+    return 0;
+}
+
 /* ------------------------------------------------------------------ */
 /*  Public functions                                                   */
 /* ------------------------------------------------------------------ */
+
+int ui_prompt_first_player(int *player_first)
+{
+    char board[BOARD_SIZE][BOARD_SIZE];
+    int no_highlight[BOARD_SIZE][BOARD_SIZE] = {{0}};
+    char input[INPUT_BUFFER_SIZE];
+    const char *error = NULL;
+
+    initialize_board(board);
+
+    for (;;) {
+        draw_game_screen(board, no_highlight);
+
+        print_message_line(ANSI_YELLOW, error);
+        print_left(ANSI_BOLD, "Who goes first?");
+        print_left(COLOR_PLAYER, "  1) You (X)");
+        print_left(COLOR_AI, "  2) AI  (O)");
+        print_prompt(margin_for(BANNER_WIDTH), "Enter 1 or 2 (Q to quit): ");
+
+        if (!read_line(input, sizeof input)) {
+            return 0; /* end-of-file (Ctrl+D) */
+        }
+        if (is_quit_command(input)) {
+            return 0;
+        }
+
+        int choice = parse_first_player_choice(input);
+        if (choice == 0) {
+            error = "Invalid input. Enter 1 or 2.";
+            continue;
+        }
+
+        *player_first = (choice == 1);
+        return 1;
+    }
+}
 
 int ui_prompt_player_move(char board[BOARD_SIZE][BOARD_SIZE], const char *notice,
                           int *row, int *col)
