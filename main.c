@@ -45,9 +45,10 @@ static int play_round(void)
         } else {
             /* The AI (O). */
             ui_show_ai_thinking(board);
-            if (!ai_move(board, &row, &col)) {
+            if (!ai_choose_move(board, &row, &col)) {
                 return ui_show_game_over(board, RESULT_DRAW); /* no square left */
             }
+            make_move(board, row, col, AI_SYMBOL);
             move_to_string(row, col, move_text);
             snprintf(notice, sizeof notice, "AI chose %s", move_text);
 
